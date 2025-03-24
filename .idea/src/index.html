@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktives Kryptographie-Lernwerkzeug</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+    <div class="container">
+        <h1>Interaktives Kryptographie-Lernwerkzeug</h1>
+    </div>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#grundlagen" class="nav-link active">Grundlagen</a></li>
+        <li><a href="#xor" class="nav-link">XOR-Operation</a></li>
+        <li><a href="#klassisch" class="nav-link">Klassische Verfahren</a></li>
+        <li><a href="#spn" class="nav-link">SPN</a></li>
+        <li><a href="#betriebsmodi" class="nav-link">Betriebsmodi</a></li>
+        <li><a href="#angriffe" class="nav-link">Angriffe</a></li>
+        <li><a href="#rsa" class="nav-link">RSA</a></li>
+        <li><a href="#mathe" class="nav-link">Mathematik</a></li>
+        <li><a href="serie1.html">Serie 1</a></li>
+        <li><a href="serie2.html">Serie 2</a></li>
+    </ul>
+</nav>
+
+<main class="container">
+    <!-- Grundlagen Section -->
+    <div id="grundlagen" class="section active">
+        <h2>Grundlegende Begriffe & Konzepte</h2>
+
+        <h3>Kryptographische Grundelemente</h3>
+        <table>
+            <tr>
+                <th>Begriff</th>
+                <th>Definition</th>
+            </tr>
+            <tr>
+                <td><strong>Kryptosystem</strong></td>
+                <td>Tupel (X, K, Y, e, d) mit X = Klartexte, K = Schlüssel, Y = Chiffretexte</td>
+            </tr>
+            <tr>
+                <td><strong>Verschlüsselung</strong></td>
+                <td>e: X × K → Y</td>
+            </tr>
+            <tr>
+                <td><strong>Entschlüsselung</strong></td>
+                <td>d: Y × K → X mit d(e(x, k), k) = x für alle x ∈ X, k ∈ K</td>
+            </tr>
+            <tr>
+                <td><strong>Kerckhoffs-Prinzip</strong></td>
+                <td>Die Sicherheit eines kryptographischen Systems darf nicht von der Geheimhaltung des Algorithmus abhängen</td>
+            </tr>
+            <tr>
+                <td><strong>Shannon-Prinzip</strong></td>
+                <td>Der Gegner weiß über das System so viel wie wir selbst, nur den Schlüssel kennt er nicht</td>
+            </tr>
+        </table>
+
+        <h3>Sicherheitskonzepte</h3>
+        <table>
+            <tr>
+                <th>Konzept</th>
+                <th>Beschreibung</th>
+            </tr>
+            <tr>
+                <td><strong>Possibilistische Sicherheit</strong></td>
+                <td>Für jeden Klartext x und Chiffretext y existiert ein Schlüssel k mit e(x, k) = y</td>
+            </tr>
+            <tr>
+                <td><strong>Informationstheoretische Sicherheit</strong></td>
+                <td>Selbst mit unbegrenzter Rechenleistung ist das System nicht zu brechen</td>
+            </tr>
+            <tr>
+                <td><strong>Komplexitätstheoretische Sicherheit</strong></td>
+                <td>Mit beschränkter Rechenleistung ist das System praktisch nicht zu brechen</td>
+            </tr>
+            <tr>
+                <td><strong>Perfekte Sicherheit</strong></td>
+                <td>Die Wahrscheinlichkeitsverteilung des Chiffretextes ist unabhängig vom Klartext</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktive Übung: Possibilistische Sicherheit</h3>
+            <p>Überprüfen Sie, ob ein gegebenes Kryptosystem possibilistisch sicher ist.</p>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="system1">System 1</div>
+                <div class="tab" data-tab="system2">System 2</div>
+            </div>
+
+            <div id="system1" class="tab-content active">
+                <p>System 1: 3×3 Verschlüsselungstabelle</p>
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>a</th>
+                        <th>b</th>
+                        <th>c</th>
+                    </tr>
+                    <tr>
+                        <td><strong>k₁</strong></td>
+                        <td>A</td>
+                        <td>B</td>
+                        <td>C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>k₂</strong></td>
+                        <td>B</td>
+                        <td>C</td>
+                        <td>A</td>
+                    </tr>
+                    <tr>
+                        <td><strong>k₃</strong></td>
+                        <td>C</td>
+                        <td>A</td>
+                        <td>B</td>
+                    </tr>
+                </table>
+
+                <div class="input-group">
+                    <label>Wählen Sie ein Klartextzeichen:</label>
+                    <select id="plaintext1">
+                        <option value="a">a</option>
+                        <option value="b">b</option>
+                        <option value="c">c</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Wählen Sie ein Chiffretextzeichen:</label>
+                    <select id="ciphertext1">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                    </select>
+                </div>
+
+                <button id="check1">Überprüfen</button>
+
+                <div class="output" id="output1"></div>
+            </div>
+
+            <div id="system2" class="tab-content">
+                <p>System 2: 3×3 Verschlüsselungstabelle</p>
+                <table>
+                    <tr>
+                        <th></th>
+                        <th>a</th>
+                        <th>b</th>
+                        <th>c</th>
+                    </tr>
+                    <tr>
+                        <td><strong>k₁</strong></td>
+                        <td>A</td>
+                        <td>B</td>
+                        <td>C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>k₂</strong></td>
+                        <td>B</td>
+                        <td>A</td>
+                        <td>C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>k₃</strong></td>
+                        <td>A</td>
+                        <td>B</td>
+                        <td>C</td>
+                    </tr>
+                </table>
+
+                <div class="input-group">
+                    <label>Wählen Sie ein Klartextzeichen:</label>
+                    <select id="plaintext2">
+                        <option value="a">a</option>
+                        <option value="b">b</option>
+                        <option value="c">c</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Wählen Sie ein Chiffretextzeichen:</label>
+                    <select id="ciphertext2">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                    </select>
+                </div>
+
+                <button id="check2">Überprüfen</button>
+
+                <div class="output" id="output2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- XOR Section -->
+    <div id="xor" class="section">
+        <h2>XOR-Operation (⊕)</h2>
+
+        <table>
+            <tr>
+                <th>A</th>
+                <th>B</th>
+                <th>A ⊕ B</th>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>0</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>0</td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <h3>Wichtige Eigenschaften:</h3>
+            <ul>
+                <li>a ⊕ a = 0</li>
+                <li>a ⊕ 0 = a</li>
+                <li>(a ⊕ b) ⊕ c = a ⊕ (b ⊕ c)</li>
+                <li>a ⊕ b = b ⊕ a</li>
+            </ul>
+        </div>
+
+        <div class="interactive-box">
+            <h3>Interaktiver XOR-Rechner</h3>
+
+            <div class="input-group">
+                <label>Binärzahl A:</label>
+                <input type="text" id="xor-a" placeholder="z.B. 1010">
+            </div>
+
+            <div class="input-group">
+                <label>Binärzahl B:</label>
+                <input type="text" id="xor-b" placeholder="z.B. 0101">
+            </div>
+
+            <button id="calculate-xor">Berechnen</button>
+
+            <div class="output" id="xor-output"></div>
+
+            <div class="step-by-step" id="xor-steps"></div>
+        </div>
+
+        <div class="interactive-box">
+            <h3>XOR-Visualisierung</h3>
+            <p>Beobachten Sie, wie die XOR-Operation auf zwei Bit-Folgen angewendet wird.</p>
+
+            <div class="input-group">
+                <label>Binärzahl A (max. 8 Bit):</label>
+                <input type="text" id="xor-viz-a" maxlength="8" placeholder="z.B. 1010">
+            </div>
+
+            <div class="input-group">
+                <label>Binärzahl B (max. 8 Bit):</label>
+                <input type="text" id="xor-viz-b" maxlength="8" placeholder="z.B. 0101">
+            </div>
+
+            <button id="start-xor-viz">Visualisieren</button>
+
+            <div class="visualizer" id="xor-visualizer"></div>
+        </div>
+    </div>
+
+    <!-- Klassische Verfahren Section -->
+    <div id="klassisch" class="section">
+        <h2>Klassische Verschlüsselungsverfahren</h2>
+
+        <table>
+            <tr>
+                <th>Verfahren</th>
+                <th>Beschreibung</th>
+                <th>Sicherheit</th>
+            </tr>
+            <tr>
+                <td><strong>Caesar-Chiffre</strong></td>
+                <td>Verschiebung um k Stellen im Alphabet</td>
+                <td>Sehr niedrig</td>
+            </tr>
+            <tr>
+                <td><strong>Vigenère-Chiffre</strong></td>
+                <td>Mehrere Caesar-Chiffren nach Schlüsselwort</td>
+                <td>Niedrig</td>
+            </tr>
+            <tr>
+                <td><strong>One-Time-Pad</strong></td>
+                <td>XOR mit zufälligem Schlüssel gleicher Länge</td>
+                <td>Perfekte Sicherheit</td>
+            </tr>
+            <tr>
+                <td><strong>Permutationschiffre</strong></td>
+                <td>Vertauschung von Zeichen nach fester Regel</td>
+                <td>Niedrig</td>
+            </tr>
+            <tr>
+                <td><strong>Substitutionschiffre</strong></td>
+                <td>Ersetzen von Zeichen nach fester Tabelle</td>
+                <td>Niedrig-mittel</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktive Caesar-Verschlüsselung</h3>
+
+            <div class="input-group">
+                <label>Klartext:</label>
+                <input type="text" id="caesar-plain" placeholder="Geben Sie einen Text ein...">
+            </div>
+
+            <div class="input-group">
+                <label>Verschiebung (1-25):</label>
+                <input type="number" id="caesar-shift" min="1" max="25" value="3">
+            </div>
+
+            <button id="caesar-encrypt">Verschlüsseln</button>
+            <button id="caesar-decrypt">Entschlüsseln</button>
+
+            <div class="output" id="caesar-output"></div>
+
+            <div class="info-box">
+                <p>Bei der Caesar-Verschlüsselung wird jeder Buchstabe um eine feste Anzahl Stellen im Alphabet verschoben. Der Schlüssel ist die Anzahl der Verschiebungen.</p>
+            </div>
+        </div>
+
+        <div class="interactive-box">
+            <h3>Interaktives One-Time-Pad</h3>
+
+            <div class="input-group">
+                <label>Klartext (binär):</label>
+                <input type="text" id="otp-plain" placeholder="z.B. 1010101010">
+            </div>
+
+            <div class="input-group">
+                <label>Schlüssel (wird automatisch generiert):</label>
+                <input type="text" id="otp-key" readonly>
+            </div>
+
+            <button id="otp-generate-key">Schlüssel generieren</button>
+            <button id="otp-encrypt">Verschlüsseln</button>
+            <button id="otp-decrypt">Entschlüsseln</button>
+
+            <div class="output" id="otp-output"></div>
+
+            <div class="info-box">
+                <p>Das One-Time-Pad ist beweisbar sicher, wenn der Schlüssel (1) zufällig, (2) so lang wie der Klartext und (3) nur einmal verwendet wird.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPN Section -->
+    <div id="spn" class="section">
+        <h2>Substitutions-Permutations-Netzwerk (SPN)</h2>
+
+        <h3>Parameter des SPN</h3>
+        <table>
+            <tr>
+                <th>Parameter</th>
+                <th>Bedeutung</th>
+            </tr>
+            <tr>
+                <td><strong>r</strong></td>
+                <td>Anzahl der Runden</td>
+            </tr>
+            <tr>
+                <td><strong>n</strong></td>
+                <td>Blockgröße (in Bits)</td>
+            </tr>
+            <tr>
+                <td><strong>m</strong></td>
+                <td>Bit-Größe des S-Box Eingangs/Ausgangs</td>
+            </tr>
+            <tr>
+                <td><strong>S</strong></td>
+                <td>Substitutionsbox</td>
+            </tr>
+            <tr>
+                <td><strong>β</strong></td>
+                <td>Permutationsfunktion</td>
+            </tr>
+            <tr>
+                <td><strong>K(k,i)</strong></td>
+                <td>Rundenschlüssel i abgeleitet vom Schlüssel k</td>
+            </tr>
+        </table>
+
+        <h3>Verschlüsselungsprozess</h3>
+        <table>
+            <tr>
+                <th>Schritt</th>
+                <th>Operation</th>
+            </tr>
+            <tr>
+                <td><strong>1</strong></td>
+                <td>Anfängliche Schlüsseladdition: u₀ = x ⊕ K(k,0)</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td>Für i = 1 bis r-1:<br>- S-Box anwenden: v_i = S(u_{i-1})<br>- Permutation anwenden: w_i = β(v_i)<br>- Rundenschlüssel addieren: u_i = w_i ⊕ K(k,i)</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td>Letzte Runde:<br>- S-Box anwenden: v_r = S(u_{r-1})<br>- Rundenschlüssel addieren: y = v_r ⊕ K(k,r)</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktive SPN-Simulation</h3>
+            <p>Simulieren Sie ein vereinfachtes SPN mit benutzerdefinierten Parametern.</p>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="spn-config">Konfiguration</div>
+                <div class="tab" data-tab="spn-encrypt">Verschlüsselung</div>
+            </div>
+
+            <div id="spn-config" class="tab-content active">
+                <div class="input-group">
+                    <label>Anzahl der Runden (r):</label>
+                    <input type="number" id="spn-rounds" min="1" max="4" value="2">
+                </div>
+
+                <div class="input-group">
+                    <label>S-Box (Hexadezimal, 16 Einträge):</label>
+                    <input type="text" id="spn-sbox" value="E4D12FB83A6C5907" maxlength="16">
+                </div>
+
+                <div class="input-group">
+                    <label>Schlüssel (Binär, 16 Bit):</label>
+                    <input type="text" id="spn-key" value="1010101010101010" maxlength="16">
+                </div>
+
+                <button id="spn-setup">Konfiguration speichern</button>
+
+                <div class="output" id="spn-config-output"></div>
+            </div>
+
+            <div id="spn-encrypt" class="tab-content">
+                <div class="input-group">
+                    <label>Klartext (Binär, 16 Bit):</label>
+                    <input type="text" id="spn-plaintext" value="0000000000000000" maxlength="16">
+                </div>
+
+                <button id="spn-run">Verschlüsseln</button>
+
+                <div class="output" id="spn-encrypt-output"></div>
+
+                <div class="step-by-step" id="spn-steps"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Betriebsmodi Section -->
+    <div id="betriebsmodi" class="section">
+        <h2>Betriebsmodi</h2>
+
+        <table>
+            <tr>
+                <th>Modus</th>
+                <th>Verschlüsselung</th>
+                <th>Fehlerfortpflanzung</th>
+                <th>Sicherheit</th>
+            </tr>
+            <tr>
+                <td><strong>ECB</strong></td>
+                <td>C_i = E(P_i, K)</td>
+                <td>Keine</td>
+                <td>Niedrig für strukturierte Daten</td>
+            </tr>
+            <tr>
+                <td><strong>CBC</strong></td>
+                <td>C_i = E(P_i ⊕ C_{i-1}, K)</td>
+                <td>Auf Block i und i+1</td>
+                <td>Mittelhoch bis hoch</td>
+            </tr>
+            <tr>
+                <td><strong>CFB</strong></td>
+                <td>C_i = P_i ⊕ E(C_{i-1}, K)</td>
+                <td>Auf Block i und folgende</td>
+                <td>Mittelhoch bis hoch</td>
+            </tr>
+            <tr>
+                <td><strong>OFB</strong></td>
+                <td>C_i = P_i ⊕ O_i; O_i = E(O_{i-1}, K)</td>
+                <td>Keine</td>
+                <td>Hoch</td>
+            </tr>
+            <tr>
+                <td><strong>CTR</strong></td>
+                <td>C_i = P_i ⊕ E(IV+i, K)</td>
+                <td>Keine</td>
+                <td>Hoch (bei korrekter Implementierung)</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktive Betriebsmodi-Simulation</h3>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="ecb-mode">ECB</div>
+                <div class="tab" data-tab="cbc-mode">CBC</div>
+                <div class="tab" data-tab="ctr-mode">CTR</div>
+            </div>
+
+            <div id="ecb-mode" class="tab-content active">
+                <h4>Electronic Codebook (ECB)</h4>
+                <p>Im ECB-Modus wird jeder Block unabhängig voneinander verschlüsselt.</p>
+
+                <div class="input-group">
+                    <label>Binäre Klartextblöcke (durch Leerzeichen getrennt):</label>
+                    <input type="text" id="ecb-plaintext" value="0010 0110 1011" placeholder="z.B. 0010 0110 1011">
+                </div>
+
+                <div class="input-group">
+                    <label>Binärer Schlüssel:</label>
+                    <input type="text" id="ecb-key" value="0011" placeholder="z.B. 0011">
+                </div>
+
+                <button id="run-ecb">Simulieren</button>
+
+                <div class="mode-visualizer" id="ecb-visualizer"></div>
+
+                <div class="output" id="ecb-output"></div>
+
+                <div class="info-box">
+                    <p><strong>Vorteile:</strong> Einfach zu implementieren, Parallellisierbar</p>
+                    <p><strong>Nachteile:</strong> Gleiche Klartextblöcke erzeugen gleiche Chiffretextblöcke, unsicher für strukturierte Daten</p>
+                </div>
+            </div>
+
+            <div id="cbc-mode" class="tab-content">
+                <h4>Cipher Block Chaining (CBC)</h4>
+                <p>Im CBC-Modus wird jeder Klartextblock mit dem vorherigen Chiffretextblock XOR-verknüpft, bevor er verschlüsselt wird.</p>
+
+                <div class="input-group">
+                    <label>Binäre Klartextblöcke (durch Leerzeichen getrennt):</label>
+                    <input type="text" id="cbc-plaintext" value="0010 0110 1011" placeholder="z.B. 0010 0110 1011">
+                </div>
+
+                <div class="input-group">
+                    <label>Binärer Schlüssel:</label>
+                    <input type="text" id="cbc-key" value="0011" placeholder="z.B. 0011">
+                </div>
+
+                <div class="input-group">
+                    <label>Initialisierungsvektor (IV):</label>
+                    <input type="text" id="cbc-iv" value="1110" placeholder="z.B. 1110">
+                </div>
+
+                <button id="run-cbc">Simulieren</button>
+
+                <div class="mode-visualizer" id="cbc-visualizer"></div>
+
+                <div class="output" id="cbc-output"></div>
+
+                <div class="info-box">
+                    <p><strong>Vorteile:</strong> Höhere Sicherheit als ECB, Verbirgt Muster im Klartext</p>
+                    <p><strong>Nachteile:</strong> Nicht parallelisierbar bei der Verschlüsselung, Fehlerfortpflanzung</p>
+                </div>
+            </div>
+
+            <div id="ctr-mode" class="tab-content">
+                <h4>Counter Mode (CTR)</h4>
+                <p>Im CTR-Modus wird ein Zähler verschlüsselt und das Ergebnis mit dem Klartextblock XOR-verknüpft.</p>
+
+                <div class="input-group">
+                    <label>Binäre Klartextblöcke (durch Leerzeichen getrennt):</label>
+                    <input type="text" id="ctr-plaintext" value="0010 0110 1011" placeholder="z.B. 0010 0110 1011">
+                </div>
+
+                <div class="input-group">
+                    <label>Binärer Schlüssel:</label>
+                    <input type="text" id="ctr-key" value="0011" placeholder="z.B. 0011">
+                </div>
+
+                <div class="input-group">
+                    <label>Initialer Zähler (Counter):</label>
+                    <input type="text" id="ctr-counter" value="1110" placeholder="z.B. 1110">
+                </div>
+
+                <button id="run-ctr">Simulieren</button>
+
+                <div class="mode-visualizer" id="ctr-visualizer"></div>
+
+                <div class="output" id="ctr-output"></div>
+
+                <div class="info-box">
+                    <p><strong>Vorteile:</strong> Vollständig parallelisierbar, Keine Fehlerfortpflanzung, Gute Sicherheit</p>
+                    <p><strong>Nachteile:</strong> Jeder Zähler darf nur einmal verwendet werden, Sicherheit hängt vom IV ab</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Angriffe Section -->
+    <div id="angriffe" class="section">
+        <h2>Angriffe auf Kryptographische Systeme</h2>
+
+        <h3>Klassifikation nach Angreiferkenntnis</h3>
+        <table>
+            <tr>
+                <th>Angriffsart</th>
+                <th>Kenntnis des Angreifers</th>
+                <th>Beschreibung</th>
+            </tr>
+            <tr>
+                <td><strong>Ciphertext-only</strong></td>
+                <td>Nur Chiffretexte</td>
+                <td>Grundlegendster Angriff, nur verschlüsselte Daten bekannt</td>
+            </tr>
+            <tr>
+                <td><strong>Known-plaintext</strong></td>
+                <td>Einige Klartext-Chiffretext-Paare</td>
+                <td>Angreifer kennt einige Klartext-Chiffretext-Paare</td>
+            </tr>
+            <tr>
+                <td><strong>Chosen-plaintext</strong></td>
+                <td>Frei wählbare Klartexte</td>
+                <td>Angreifer kann beliebige Klartexte verschlüsseln lassen</td>
+            </tr>
+            <tr>
+                <td><strong>Chosen-ciphertext</strong></td>
+                <td>Frei wählbare Chiffretexte</td>
+                <td>Angreifer kann beliebige Chiffretexte entschlüsseln lassen</td>
+            </tr>
+            <tr>
+                <td><strong>Related-key</strong></td>
+                <td>Beziehung zwischen verschiedenen Schlüsseln</td>
+                <td>Angreifer kennt mathematische Beziehung zwischen Schlüsseln</td>
+            </tr>
+        </table>
+
+        <h3>Konkrete Angriffsmethoden</h3>
+        <table>
+            <tr>
+                <th>Angriffstyp</th>
+                <th>Ziel</th>
+                <th>Beschreibung</th>
+            </tr>
+            <tr>
+                <td><strong>Brute-Force</strong></td>
+                <td>Alle Systeme</td>
+                <td>Systematisches Durchprobieren aller möglichen Schlüssel</td>
+            </tr>
+            <tr>
+                <td><strong>Frequenzanalyse</strong></td>
+                <td>Klassische Substitutionschiffren</td>
+                <td>Ausnutzung der Buchstabenhäufigkeit in natürlichen Sprachen</td>
+            </tr>
+            <tr>
+                <td><strong>Differenzielle Kryptoanalyse</strong></td>
+                <td>Blockchiffren</td>
+                <td>Analyse, wie sich Unterschiede in Klartexten auf Chiffretexte auswirken</td>
+            </tr>
+            <tr>
+                <td><strong>Lineare Kryptoanalyse</strong></td>
+                <td>Blockchiffren</td>
+                <td>Suche nach linearen Approximationen der nichtlinearen Komponenten</td>
+            </tr>
+            <tr>
+                <td><strong>Side-Channel-Angriffe</strong></td>
+                <td>Implementierungen</td>
+                <td>Ausnutzung von physikalischen Messwerten (Zeit, Strom, EM-Strahlung)</td>
+            </tr>
+            <tr>
+                <td><strong>Meet-in-the-Middle</strong></td>
+                <td>Mehrfachverschlüsselung</td>
+                <td>Reduktion des Suchraums bei mehrfacher Verschlüsselung</td>
+            </tr>
+            <tr>
+                <td><strong>Replay-Angriff</strong></td>
+                <td>Protokolle</td>
+                <td>Wiedereinspielung abgefangener gültiger Nachrichten</td>
+            </tr>
+            <tr>
+                <td><strong>Man-in-the-Middle</strong></td>
+                <td>Schlüsselaustausch</td>
+                <td>Abfangen und Manipulieren der Kommunikation zwischen zwei Parteien</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktive Frequenzanalyse</h3>
+            <p>Probieren Sie einen Angriff auf eine einfache Substitutionschiffre durch Frequenzanalyse.</p>
+
+            <div class="input-group">
+                <label>Verschlüsselter Text:</label>
+                <textarea id="freq-ciphertext" rows="5" placeholder="Geben Sie den verschlüsselten Text ein...">Hmm iul qcuul Iujqml? Zdl pcbblm zdl lq hiqqlfhjlalm. Zdl pcbblm zdl qr ydlil Jmovrchdljvmalsql?</textarea>
+            </div>
+
+            <button id="analyze-freq">Analysieren</button>
+
+            <div class="output" id="freq-output"></div>
+
+            <div id="freq-chart" style="width: 100%; height: 300px; background-color: #eaf2f8;"></div>
+
+            <div class="input-group">
+                <label>Vorgeschlagene Substitution:</label>
+                <input type="text" id="freq-substitution" placeholder="z.B. A -> X, B -> Y, ...">
+            </div>
+
+            <button id="apply-substitution">Anwenden</button>
+
+            <div class="output" id="decrypted-output"></div>
+        </div>
+
+        <div class="interactive-box">
+            <h3>Brute-Force Simulation</h3>
+            <p>Simulieren Sie einen Brute-Force-Angriff auf eine Caesar-Verschlüsselung.</p>
+
+            <div class="input-group">
+                <label>Verschlüsselter Text:</label>
+                <input type="text" id="brute-ciphertext" placeholder="Geben Sie den verschlüsselten Text ein..." value="Glh Vlpsoh Dqzhqgxqj">
+            </div>
+
+            <button id="brute-force">Alle Verschiebungen ausprobieren</button>
+
+            <div class="output" id="brute-output"></div>
+        </div>
+    </div>
+
+    <!-- RSA Section -->
+    <div id="rsa" class="section">
+        <h2>RSA-Algorithmus</h2>
+
+        <h3>Schlüsselgenerierung</h3>
+        <table>
+            <tr>
+                <th>Schritt</th>
+                <th>Operation</th>
+            </tr>
+            <tr>
+                <td><strong>1</strong></td>
+                <td>Wähle zwei große Primzahlen p, q</td>
+            </tr>
+            <tr>
+                <td><strong>2</strong></td>
+                <td>Berechne n = p·q</td>
+            </tr>
+            <tr>
+                <td><strong>3</strong></td>
+                <td>Berechne φ(n) = (p-1)(q-1)</td>
+            </tr>
+            <tr>
+                <td><strong>4</strong></td>
+                <td>Wähle e so, dass ggT(e, φ(n)) = 1</td>
+            </tr>
+            <tr>
+                <td><strong>5</strong></td>
+                <td>Berechne d so, dass e·d ≡ 1 (mod φ(n))</td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <p><strong>Schlüsselpaare:</strong></p>
+            <ul>
+                <li>Öffentlicher Schlüssel: (n, e)</li>
+                <li>Privater Schlüssel: (n, d)</li>
+            </ul>
+
+            <p><strong>Verschlüsselungs-/Entschlüsselungsoperationen:</strong></p>
+            <ul>
+                <li>Verschlüsselung: C = M^e mod n</li>
+                <li>Entschlüsselung: M = C^d mod n</li>
+            </ul>
+        </div>
+
+        <div class="interactive-box">
+            <h3>Interaktive RSA-Demonstration</h3>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="key-gen">Schlüsselgenerierung</div>
+                <div class="tab" data-tab="rsa-encrypt">Verschlüsselung</div>
+                <div class="tab" data-tab="rsa-decrypt">Entschlüsselung</div>
+            </div>
+
+            <div id="key-gen" class="tab-content active">
+                <div class="input-group">
+                    <label>Primzahl p:</label>
+                    <input type="number" id="rsa-p" min="2" value="11">
+                </div>
+
+                <div class="input-group">
+                    <label>Primzahl q:</label>
+                    <input type="number" id="rsa-q" min="2" value="13">
+                </div>
+
+                <button id="generate-keys">Schlüssel generieren</button>
+
+                <div class="output" id="key-output"></div>
+
+                <div class="step-by-step" id="key-steps"></div>
+            </div>
+
+            <div id="rsa-encrypt" class="tab-content">
+                <div class="input-group">
+                    <label>Öffentlicher Modulus n:</label>
+                    <input type="number" id="rsa-encrypt-n" min="1" value="143">
+                </div>
+
+                <div class="input-group">
+                    <label>Öffentlicher Exponent e:</label>
+                    <input type="number" id="rsa-encrypt-e" min="1" value="7">
+                </div>
+
+                <div class="input-group">
+                    <label>Klartext (als Zahl M < n):</label>
+                    <input type="number" id="rsa-plaintext" min="0" value="9" max="142">
+                </div>
+
+                <button id="rsa-encrypt-btn">Verschlüsseln</button>
+
+                <div class="output" id="rsa-encrypt-output"></div>
+
+                <div class="step-by-step" id="encrypt-steps"></div>
+            </div>
+
+            <div id="rsa-decrypt" class="tab-content">
+                <div class="input-group">
+                    <label>Öffentlicher Modulus n:</label>
+                    <input type="number" id="rsa-decrypt-n" min="1" value="143">
+                </div>
+
+                <div class="input-group">
+                    <label>Privater Exponent d:</label>
+                    <input type="number" id="rsa-decrypt-d" min="1" value="103">
+                </div>
+
+                <div class="input-group">
+                    <label>Chiffretext (als Zahl C < n):</label>
+                    <input type="number" id="rsa-ciphertext" min="0" value="48" max="142">
+                </div>
+
+                <button id="rsa-decrypt-btn">Entschlüsseln</button>
+
+                <div class="output" id="rsa-decrypt-output"></div>
+
+                <div class="step-by-step" id="decrypt-steps"></div>
+            </div>
+        </div>
+
+        <h3>Schnelle Exponentiation (Square and Multiply)</h3>
+
+        <div class="interactive-box">
+            <h3>Interaktive Schnelle Exponentiation</h3>
+            <p>Berechnen Sie a^b mod n effizient.</p>
+
+            <div class="input-group">
+                <label>Basis (a):</label>
+                <input type="number" id="fast-exp-a" min="1" value="3">
+            </div>
+
+            <div class="input-group">
+                <label>Exponent (b):</label>
+                <input type="number" id="fast-exp-b" min="1" value="13">
+            </div>
+
+            <div class="input-group">
+                <label>Modulus (n):</label>
+                <input type="number" id="fast-exp-n" min="1" value="17">
+            </div>
+
+            <button id="calc-fast-exp">Berechnen</button>
+
+            <div class="output" id="fast-exp-output"></div>
+
+            <div class="step-by-step" id="fast-exp-steps"></div>
+        </div>
+    </div>
+
+    <!-- Mathe Section -->
+    <div id="mathe" class="section">
+        <h2>Mathematische Grundlagen</h2>
+
+        <h3>Euklidischer Algorithmus und erweiterter euklidischer Algorithmus</h3>
+
+        <table>
+            <tr>
+                <th>Algorithmus</th>
+                <th>Zweck</th>
+                <th>Verfahren</th>
+            </tr>
+            <tr>
+                <td><strong>Euklidischer Algorithmus</strong></td>
+                <td>Berechnung des ggT(a,b)</td>
+                <td>Wiederholte Division mit Rest</td>
+            </tr>
+            <tr>
+                <td><strong>Erweiterter euklidischer Algorithmus</strong></td>
+                <td>Bestimmung von s,t mit s·a + t·b = ggT(a,b)</td>
+                <td>Zusätzliche Verfolgung der Linearkombinationen</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktiver Euklidischer Algorithmus</h3>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="gcd-calc">ggT Berechnung</div>
+                <div class="tab" data-tab="extended-gcd">Erweiterter Euklidischer Algorithmus</div>
+            </div>
+
+            <div id="gcd-calc" class="tab-content active">
+                <div class="input-group">
+                    <label>Erste Zahl (a):</label>
+                    <input type="number" id="gcd-a" min="1" value="26">
+                </div>
+
+                <div class="input-group">
+                    <label>Zweite Zahl (b):</label>
+                    <input type="number" id="gcd-b" min="1" value="15">
+                </div>
+
+                <button id="calc-gcd">Berechnen</button>
+
+                <div class="output" id="gcd-output"></div>
+
+                <div class="step-by-step" id="gcd-steps"></div>
+            </div>
+
+            <div id="extended-gcd" class="tab-content">
+                <div class="input-group">
+                    <label>Erste Zahl (a):</label>
+                    <input type="number" id="ext-gcd-a" min="1" value="26">
+                </div>
+
+                <div class="input-group">
+                    <label>Zweite Zahl (b):</label>
+                    <input type="number" id="ext-gcd-b" min="1" value="15">
+                </div>
+
+                <button id="calc-ext-gcd">Berechnen</button>
+
+                <div class="output" id="ext-gcd-output"></div>
+
+                <div class="step-by-step" id="ext-gcd-steps"></div>
+            </div>
+        </div>
+
+        <h3>Modulare Arithmetik</h3>
+
+        <table>
+            <tr>
+                <th>Operation</th>
+                <th>Notation</th>
+                <th>Eigenschaften</th>
+            </tr>
+            <tr>
+                <td><strong>Kongruenz</strong></td>
+                <td>a ≡ b (mod n)</td>
+                <td>a und b haben den gleichen Rest bei Division durch n</td>
+            </tr>
+            <tr>
+                <td><strong>Addition</strong></td>
+                <td>(a + b) mod n</td>
+                <td>(a mod n + b mod n) mod n</td>
+            </tr>
+            <tr>
+                <td><strong>Multiplikation</strong></td>
+                <td>(a · b) mod n</td>
+                <td>(a mod n · b mod n) mod n</td>
+            </tr>
+            <tr>
+                <td><strong>Invertierung</strong></td>
+                <td>a^(-1) mod n</td>
+                <td>a · a^(-1) ≡ 1 (mod n) falls ggT(a,n) = 1</td>
+            </tr>
+            <tr>
+                <td><strong>Potenzierung</strong></td>
+                <td>a^b mod n</td>
+                <td>Nutzung der Square-and-Multiply-Methode</td>
+            </tr>
+        </table>
+
+        <div class="interactive-box">
+            <h3>Interaktiver Modular-Rechner</h3>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="mod-calc">Modulare Arithmetik</div>
+                <div class="tab" data-tab="mod-inverse">Multiplikatives Inverses</div>
+            </div>
+
+            <div id="mod-calc" class="tab-content active">
+                <div class="input-group">
+                    <label>Erste Zahl (a):</label>
+                    <input type="number" id="mod-a" value="15">
+                </div>
+
+                <div class="input-group">
+                    <label>Operation:</label>
+                    <select id="mod-op">
+                        <option value="add">+</option>
+                        <option value="sub">-</option>
+                        <option value="mul">×</option>
+                        <option value="pow">^</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Zweite Zahl (b):</label>
+                    <input type="number" id="mod-b" value="7">
+                </div>
+
+                <div class="input-group">
+                    <label>Modulus (n):</label>
+                    <input type="number" id="mod-n" min="1" value="26">
+                </div>
+
+                <button id="calc-mod">Berechnen</button>
+
+                <div class="output" id="mod-output"></div>
+            </div>
+
+            <div id="mod-inverse" class="tab-content">
+                <div class="input-group">
+                    <label>Zahl (a):</label>
+                    <input type="number" id="inv-a" min="1" value="5">
+                </div>
+
+                <div class="input-group">
+                    <label>Modulus (n):</label>
+                    <input type="number" id="inv-n" min="1" value="26">
+                </div>
+
+                <button id="calc-inv">Inverses berechnen</button>
+
+                <div class="output" id="inv-output"></div>
+
+                <div class="step-by-step" id="inv-steps"></div>
+            </div>
+        </div>
+
+        <h3>Eulersche Phi-Funktion</h3>
+
+        <table>
+            <tr>
+                <th>Fall</th>
+                <th>Formel</th>
+            </tr>
+            <tr>
+                <td>p ist Primzahl</td>
+                <td>φ(p) = p-1</td>
+            </tr>
+            <tr>
+                <td>p, q sind verschiedene Primzahlen</td>
+                <td>φ(p·q) = (p-1)(q-1)</td>
+            </tr>
+            <tr>
+                <td>p^k</td>
+                <td>φ(p^k) = p^k - p^(k-1) = p^k(1-1/p)</td>
+            </tr>
+            <tr>
+                <td>n = p_1^a_1 · p_2^a_2 · ... · p_r^a_r</td>
+                <td>φ(n) = n · (1-1/p_1) · (1-1/p_2) · ... · (1-1/p_r)</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Serie 1 Section -->
+    <div id="serie1" class="section">
+        <h2>Serie 1 - Übungsaufgaben</h2>
+
+        <div class="controls">
+            <button id="toggle-all-answers-1">Alle Antworten anzeigen/verstecken</button>
+        </div>
+
+        <div class="exercise-section">
+            <div class="exercise" id="exercise-1-1">
+                <h3>Aufgabe 1 (Kerkhoff's Prinzip)</h3>
+                <p>Finden Sie ein prominentes Beispiel, wo Entwickler versucht haben, ein Verschlüsselungsverfahren geheim zu halten und sich dieses Verfahren nach Offenlegung als sehr schwach erwiesen hat und gebrochen werden konnte.</p>
+
+                <button class="toggle-answer">Antwort anzeigen/verstecken</button>
+
+                <div class="answer">
+                    <h4>Lösung:</h4>
+                    <p>Klassische Beispiele sind die GSM-Algorithmen A5/1 und A5/2. A5/1 ist eine Stromchiffre (siehe später), die 1987 entwickelt wurde, um die Sprachkommunikation von GSM zu schützen. Bereits seit 2003 ist ein praktischer Angriff bekannt. Mittlerweile kann die Verschlüsselung in Echtzeit gebrochen werden. ("Near real-time decryption with distributed cracking network").</p>
+                </div>
+            </div>
+
+            <div class="exercise" id="exercise-1-2">
+                <h3>Aufgabe 2</h3>
+                <p>Auf Folie 1.6 steht 2<sup>64</sup> als realistischere Annahme für die Anzahl an Rechenoperationen, die ein Angreifer ausführen kann. Wie lange benötigt man für 2<sup>64</sup> Rechenoperationen, wenn man einen Computer mit einem Tera-Hertz Taktfrequenz zur Verfügung hat und pro Takt eine Operation ausführen kann?</p>
+
+                <button class="toggle-answer">Antwort anzeigen/verstecken</button>
+
+                <div class="answer">
+                    <h4>Lösung:</h4>
+                    <p>2<sup>64</sup>/10<sup>12</sup>/60/60/24 > 213 Tage</p>
+                </div>
+            </div>
+
+            <div class="exercise" id="exercise-1-3">
+                <h3>Aufgabe 3 (Kryptosystem)</h3>
+                <p>Es sei X = {a, b, c} eine Menge von Klartexten, Y = {A, B, C} eine Menge von Chiffretexten und K = {k<sub>1</sub>, k<sub>2</sub>, k<sub>3</sub>} eine Menge von Schlüsseln. Durch die folgenden Tabellen sind Abbildungen e : X × K → Y definiert. In welchen Fällen gibt es Abbildungen d : Y × K → X, so dass das resultierende System ein Kryptosystem ist?</p>
+
+                <div class="tables-container">
+                    <div class="table-wrapper">
+                        <h4>(a)</h4>
+                        <table>
+                            <tr>
+                                <th></th>
+                                <th>a</th>
+                                <th>b</th>
+                                <th>c</th>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>1</sub></strong></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>2</sub></strong></td>
+                                <td>B</td>
+                                <td>C</td>
+                                <td>A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>3</sub></strong></td>
+                                <td>C</td>
+                                <td>A</td>
+                                <td>B</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <h4>(b)</h4>
+                        <table>
+                            <tr>
+                                <th></th>
+                                <th>a</th>
+                                <th>b</th>
+                                <th>c</th>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>1</sub></strong></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>2</sub></strong></td>
+                                <td>B</td>
+                                <td>A</td>
+                                <td>C</td>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>3</sub></strong></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>C</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <h4>(c)</h4>
+                        <table>
+                            <tr>
+                                <th></th>
+                                <th>a</th>
+                                <th>b</th>
+                                <th>c</th>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>1</sub></strong></td>
+                                <td>A</td>
+                                <td>B</td>
+                                <td>A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>2</sub></strong></td>
+                                <td>B</td>
+                                <td>C</td>
+                                <td>B</td>
+                            </tr>
+                            <tr>
+                                <td><strong>k<sub>3</sub></strong></td>
+                                <td>C</td>
+                                <td>B</td>
+                                <td>C</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <button class="toggle-answer">Antwort anzeigen/verstecken</button>
+
+                <div class="answer">
+                    <h4>Lösung:</h4>
+                    <p>Für (a) und (b), da dort die Funktionen e(·, k) bijektiv sind. Bei (c) nicht, da z.B. e(·, k<sub>1</sub>) nicht injektiv ist.</p>
+                </div>
+            </div>
+
+            <!-- More Serie 1 exercises can be added here -->
+        </div>
+    </div>
+
+    <!-- Serie 2 Section -->
+    <div id="serie2" class="section">
+        <h2>Serie 2 - Übungsaufgaben</h2>
+
+        <div class="controls">
+            <button id="toggle-all-answers-2">Alle Antworten anzeigen/verstecken</button>
+        </div>
+
+        <div class="exercise-section">
+            <div class="exercise" id="exercise-2-1">
+                <h3>Aufgabe 1</h3>
+                <p>Entscheiden Sie, ob</p>
+                <ol>
+                    <li>(n, e) = (40, 11), (n, d) = (40, 3)</li>
+                    <li>(n, e) = (77, 8), (n, d) = (33, 4)</li>
+                    <li>(n, e) = (77, 23), (n, d) = (77, 47)</li>
+                    <li>(n, e) = (77, 11), (n, d) = (77, 11)</li>
+                </ol>
+                <p>gültige RSA-Schlüsselpaare sind (abgesehen davon, dass die Zahlen viel zu klein sind).</p>
+
+                <button class="toggle-answer">Antwort anzeigen/verstecken</button>
+
+                <div class="answer">
+                    <h4>Lösung:</h4>
+                    <ol>
+                        <li>nein</li>
+                        <li>nein</li>
+                        <li>ja</li>
+                        <li>ja</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="exercise" id="exercise-2-2">
+                <h3>Aufgabe 2</h3>
+                <p>Entscheiden Sie jeweils, ob ein t ∈ Z<sub>m</sub><sup>*</sup> existiert mit s · t mod m = 1 und berechnen Sie gegebenenfalls so ein t:</p>
+                <ol>
+                    <li>s = 111, m = 300</li>
+                    <li>s = 19, m = 144</li>
+                    <li>s = 20, m = 40</li>
+                    <li>s = 20, m = 41</li>
+                    <li>s = 20, m = 39</li>
+                    <li>s = 20, m = 42</li>
+                </ol>
+
+                <button class="toggle-answer">Antwort anzeigen/verstecken</button>
+
+                <div class="answer">
+                    <h4>Lösung:</h4>
+                    <ol>
+                        <li>nicht möglich</li>
+                        <li>t = 91</li>
+                        <li>nicht möglich</li>
+                        <li>t = 39</li>
+                        <li>t = 2</li>
+                        <li>nicht möglich</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer class="container">
+    <p>&copy; 2025 Kryptographie-Lernwerkzeug. Alle Rechte vorbehalten.</p>
+</footer>
+
+<!-- JavaScript files -->
+<script src="js/main.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/grundlagen.js"></script>
+<script src="js/xor.js"></script>
+<script src="js/klassisch.js"></script>
+<script src="js/spn.js"></script>
+<script src="js/betriebsmodi.js"></script>
+<script src="js/angriffe.js"></script>
+<script src="js/rsa.js"></script>
+<script src="js/mathe.js"></script>
+<script src="js/serie1.js"></script>
+<script src="js/serie2.js"></script>
+</body>
+</html>
